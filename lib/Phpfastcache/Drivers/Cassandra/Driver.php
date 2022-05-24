@@ -167,12 +167,10 @@ HELP;
     protected function driverRead(CacheItemInterface $item)
     {
         try {
-            $options = new Cassandra\ExecutionOptions(
-                [
+            $options = [
                     'arguments' => ['cache_id' => $item->getKey()],
                     'page_size' => 1,
-                ]
-            );
+                ];
             $query = sprintf(
                 'SELECT cache_data FROM %s.%s WHERE cache_id = :cache_id;',
                 self::CASSANDRA_KEY_SPACE,
