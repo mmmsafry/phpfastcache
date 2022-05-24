@@ -170,7 +170,7 @@ HELP;
             $options = [
                     'arguments' => ['cache_id' => $item->getKey()],
                     'page_size' => 1,
-                ];
+            ];
             $query = sprintf(
                 'SELECT cache_data FROM %s.%s WHERE cache_id = :cache_id;',
                 self::CASSANDRA_KEY_SPACE,
@@ -201,20 +201,18 @@ HELP;
         if ($item instanceof Item) {
             try {
                 $cacheData = $this->encode($this->driverPreWrap($item));
-                $options = new Cassandra\ExecutionOptions(
-                    [
-                        'arguments' => [
-                            'cache_uuid' => new Cassandra\Uuid(),
-                            'cache_id' => $item->getKey(),
-                            'cache_data' => $cacheData,
-                            'cache_creation_date' => new Cassandra\Timestamp((new DateTime())->getTimestamp()),
-                            'cache_expiration_date' => new Cassandra\Timestamp($item->getExpirationDate()->getTimestamp()),
-                            'cache_length' => strlen($cacheData),
-                        ],
-                        'consistency' => Cassandra::CONSISTENCY_ALL,
-                        'serial_consistency' => Cassandra::CONSISTENCY_SERIAL,
-                    ]
-                );
+                $options = [ 
+                    'arguments' => [
+                        'cache_uuid' => new Cassandra\Uuid(),
+                        'cache_id' => $item->getKey(),
+                        'cache_data' => $cacheData,
+                        'cache_creation_date' => new Cassandra\Timestamp((new DateTime())->getTimestamp()),
+                        'cache_expiration_date' => new Cassandra\Timestamp($item->getExpirationDate()->getTimestamp()),
+                        'cache_length' => strlen($cacheData),
+                    ],
+                    'consistency' => Cassandra::CONSISTENCY_ALL,
+                    'serial_consistency' => Cassandra::CONSISTENCY_SERIAL,
+                ];
 
                 $query = sprintf(
                     'INSERT INTO %s.%s
